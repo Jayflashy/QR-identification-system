@@ -32,8 +32,10 @@ const createProfile = async (req, res, next) => {
         // create new profile
         profile.id = uuid();  // create unique id with uuid
         const newProfile = await profileModel.create(profile) 
+        // remove  v and id from profile object
+        const {__v,_id, ...profileData} = newProfile.toObject()
         // convert profile to string
-        const profileString = JSON.stringify(newProfile);
+        const profileString = JSON.stringify(profileData);
         // encrypt profile data with crypto
         const encryptedData = await cryptoEncryption(profileString);
         // convert data to qrcode
