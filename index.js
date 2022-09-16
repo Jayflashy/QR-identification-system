@@ -1,12 +1,11 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require("cors") 
-const {DB_URL, PORT } = require('./src/config')
-const mongoose = require("mongoose");
 const rateLimit = require('express-rate-limit');
 const { default: helmet } = require('helmet');
+require('dotenv').config()
+
 const app = express()
-const profileRoute = require('./src/routes/profileRoute')
 
 app.use(morgan("dev")) // log the request for debugging
 app.use(express.json()) // parse json bodies
@@ -26,14 +25,13 @@ app.use(helmet());
 app.get("/", (req, res) => {
     res.json({ data: "hello there" });
 });
+// routes
 
-// import routes
-app.use(profileRoute)
-// connect database
-mongoose.connect(DB_URL, {
 
-    useNewUrlParser: true,
-    
-    useUnifiedTopology: true
-    
-}).then(() => app.listen(PORT,() => console.log(`server running on port : ${PORT}`))).catch((error) => console.log(error.message))
+// 404 error
+app.use((req, res, next) => {
+    console.log("Error 404")
+    res.status(404).send('404 Error Page')
+})
+
+module.exports = app
