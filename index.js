@@ -4,6 +4,7 @@ const cors = require("cors")
 const rateLimit = require('express-rate-limit');
 const { default: helmet } = require('helmet');
 require('dotenv').config()
+const profileRoute = require('./src/routes/profile.routes')
 
 const app = express()
 
@@ -26,7 +27,7 @@ app.get("/", (req, res) => {
     res.json({ data: "hello there" });
 });
 // routes
-
+app.use(profileRoute)
 
 // 404 error
 app.use((req, res, next) => {

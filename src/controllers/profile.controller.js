@@ -1,33 +1,48 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
-
+const profileModel = require('../models/profile.model')
 // fetch all profiles from database
-const getProfiles = (req, res) => {
-    res.send('index')
+const getProfiles = async (req, res) => {
+    const profiles = await profileModel.find({}).select("-__v").select("-_id")
+    .then((result) => {
+        console.log("All profiles fetched")
+        res.status(201).json({status: "success", message:"All profiles fetched", data: result})
+        // res.send(result)
+    })
+    .catch((err) => {
+        console.log("fetching profile error", err)
+        res.status(401).send("something is wrong")
+    })
+     // if (!profiles) {
+    //     console.log("Something went wrong")
+    //     res.status(401).send("Something went wrong")
+    // } else {
+    //     
+    // }
 }
 
 // create new profile
-const createProfile = (req, res) => {
+const createProfile = async (req, res) => {
     res.send('index')
 }
 
 // delete profile
-const deleteProfile = (req, res) => {
+const deleteProfile = async (req, res) => {
     res.send('index')
 }
 
 // search profile
-const searchProfile = (req, res) => {
+const searchProfile = async (req, res) => {
     res.send('index')
 }
 
 //sort profile
-const sortProfile = (req, res) => {
+const sortProfile = async (req, res) => {
     res.send('index')
 }
 
 // verify profile
-const verifyProfile = (req, res) => {
+const verifyProfile = async (req, res) => {
     res.send('index')
 }
 module.exports = { getProfiles,createProfile, deleteProfile, searchProfile, sortProfile, verifyProfile}
