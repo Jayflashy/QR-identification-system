@@ -10,13 +10,13 @@ const ProfileSchema = new Schema({
         unique:true,
         trim:true
     },
-    firstname: {
+    firstName: {
         type: String,
         required: [true, 'A user must have a name'],
         maxlength: [30, 'firstname must be less than or equal to 30 characters.'], 
         trim:true
     },
-    lastname: {
+    lastName: {
         type: String,
         required: [true, 'lastname is required'],
         maxlength: [30, 'lastname must be less than or equal to 30 characters.'], 
