@@ -3,7 +3,7 @@ const crypto = require("crypto");
 const profileModel = require('../models/profile.model');
 const { validationSchema } = require("../utils/validation");
 const {v4 :uuid} = require('uuid');
-const { cryptoEncryption } = require("../utils/crypto");
+const { cryptoEncryption, cryptoDecryption } = require("../utils/crypto");
 const { QRencrypt } = require("../utils/qrcode");
 // fetch all profiles from database
 const getProfiles = async (req, res, next) => {
@@ -86,6 +86,21 @@ const sortProfile = async (req, res, next) => {
 
 // verify profile
 const verifyProfile = async (req, res, next) => {
-    res.send('index')
+    try{
+        // get data from request
+        const { data } = req.body
+        if(!data) {
+            res.status(400).json({status:"error", message: "encrypted data is required for verification"})
+        }
+        // decrypt request data 
+        const decryptedData = await cryptoDecryption(data)
+        console.log(decryptedData)
+        // await verifyProfileService(decryptedData)
+        res.status(200).json({status:"success", message:"data verification successful", data:decryptedData })
+    } catch (error){
+        console.log(error)
+        next (error);
+    }
+
 }
 module.exports = { getProfiles,createProfile, deleteProfile, searchProfile, sortProfile, verifyProfile}
