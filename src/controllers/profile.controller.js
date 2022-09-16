@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 const crypto = require("crypto");
 const profileModel = require('../models/profile.model');
 const { validationSchema } = require("../utils/validation");
-const {v4 :uuid} = require('uuid')
+const {v4 :uuid} = require('uuid');
+const { cryptoEncryption } = require("../utils/crypto");
+const { QRencrypt } = require("../utils/qrcode");
 // fetch all profiles from database
 const getProfiles = async (req, res, next) => {
     const profiles = await profileModel.find({}).select("-__v").select("-_id")
@@ -28,33 +30,23 @@ const createProfile = async (req, res, next) => {
     try {
         const profile = await validationSchema.validateAsync(req.body);
         // create new profile
-        profile.id = uuid();
-        console.log(profile)
+        profile.id = uuid();  // create unique id with uuid
         const newProfile = await profileModel.create(profile) 
-        return res.send(newProfile)
-        
-        // const newProfile = await createProfileService(profile);
-        // const newProfileString = JSON.stringify(newProfile);
-    
-        // const encryptedData = await cryptoEncrypt(newProfileString);
-        // const QRCode = await QRencrypt(newProfileString);
-        // res
-        //   .status(201)
-        //   .json({
-        //     msg: `Profile created successfully`,
-        //     data: encryptedData,
-        //     QRCode: QRCode
-        //   });
+        // convert profile to string
+        const profileString = JSON.stringify(newProfile);
+        // encrypt profile data with crypto
+        const encryptedData = await cryptoEncryption(profileString);
+        // convert data to qrcode
+        const encryptedQR = await QRencrypt(profileString);
+
+        console.log("profile created successfull") 
+        return res.status(201).json({status: "success", message:"profile created successfully", data: encryptedData, qrcode: encryptedQR})
       } catch (error) {
         if (error.isJoi === true) error.status = 400;
         console.log(error)
         next (error);
     }
-    // if (!body.firstname) {
-    //     return res.status(400).json ({"status":"error", "data": "firstname is required" });
-    // } else if (!body.lastname) {
-    //     return res.status(400).json ({"status":"error", "data": "lastname is required" });
-    // };
+    
 }
 
 // delete profile
