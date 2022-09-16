@@ -28,7 +28,18 @@ const createProfile = async (req, res) => {
 
 // delete profile
 const deleteProfile = async (req, res) => {
-    res.send('index')
+   // get id and delete from database
+   let id = req.params.id
+//    check if a profile with given id exist on the database
+   const checkProfile = await profileModel.findOne({id})
+   if(!checkProfile){
+       console.log("profile not found")
+       return res.status(404).json({status:"error", message:"profile with selected id does not exist"})
+   }
+   // delete profile
+   checkProfile.delete()
+   console.log("profile deleted")
+   return res.status(201).json({status:"success", message:"profile deleted successfully"})
 }
 
 // search profile
