@@ -12,7 +12,13 @@ const getProfiles = async (req, res, next) => {
     if (sort|| pageSize || page){
         console.log('we are sorting your request')
         const profiles = await profileModel.find({}).sort({firstName: 1}).limit(pageSize * 1).skip((page - 1) * pageSize).select("-__v").select("-_id");
-        return res.status(201).json({status: "success", message:"All profiles fetched and sorted", data: profiles})
+        if (!profiles) {
+            console.log("Something went wrong")
+            res.status(401).send("Something went wrong")
+        } else {
+            return res.status(201).json({status: "success", message:"All profiles fetched and sorted", data: profiles})
+        }
+       
     }
     console.log(req.query)
     // get all profiles
