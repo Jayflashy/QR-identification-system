@@ -11,7 +11,5 @@ router.delete('/profile/:id', profileController.deleteProfile)
 router.get('/search', profileController.searchProfile)
 // verify profile
 router.post('/profile/verify', profileController.verifyProfile)
-// sort profile
-router.get('/profile_sort', profileController.sortProfile)
 
 module.exports = router

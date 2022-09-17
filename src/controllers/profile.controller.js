@@ -7,6 +7,15 @@ const { cryptoEncryption, cryptoDecryption } = require("../utils/crypto");
 const { QRencrypt } = require("../utils/qrcode");
 // fetch all profiles from database
 const getProfiles = async (req, res, next) => {
+    // perform sort and pagination if request has sort, or pagesize query
+    const {sort, pageSize, page} = req.query;
+    if (sort|| pageSize || page){
+        console.log('we are sorting your request')
+        const profiles = await profileModel.find({}).sort({firstName: 1}).limit(pageSize * 1).skip((page - 1) * pageSize).select("-__v").select("-_id");
+        return res.status(201).json({status: "success", message:"All profiles fetched and sorted", data: profiles})
+    }
+    console.log(req.query)
+    // get all profiles
     const profiles = await profileModel.find({}).select("-__v").select("-_id")
     .then((result) => {
         console.log("All profiles fetched")
@@ -80,12 +89,6 @@ const searchProfile = async (req, res, next) => {
         res.status(404).json({"status":"error", "message":"profile not found"})
     }
 }
-
-//sort profile
-const sortProfile = async (req, res, next) => {
-    res.send('index')
-}
-
 // verify profile
 const verifyProfile = async (req, res, next) => {
     try{
@@ -105,4 +108,4 @@ const verifyProfile = async (req, res, next) => {
     }
 
 }
-module.exports = { getProfiles,createProfile, deleteProfile, searchProfile, sortProfile, verifyProfile}
+module.exports = { getProfiles,createProfile, deleteProfile, searchProfile, verifyProfile}
